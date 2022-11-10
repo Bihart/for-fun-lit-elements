@@ -2,23 +2,20 @@ import { LitElement, html } from "lit";
 
 export class PokeCard extends LitElement {
     static properties = {
-        name: { type: String },
-        hp: { type: String },
-        atk: { type: String }
+        pokemon: { type: Object },
     }
 
     constructor() {
         super();
-        this.name = '';
-        this.hp = '';
-        this.atk = '';
+        this.pokemon = {};
     }
 
     render() {
+        const { name, hp, atk } = this.pokemon;
         return html`
-             <p>Name=${this.name}</p>
-             <p>HP=${this.hp}</p>
-             <p>ATK=${this.atk}</p>
+             <p>Name=${name}</p>
+             <p>HP=${hp}</p>
+             <p>ATK=${atk}</p>
      `;
     }
 }

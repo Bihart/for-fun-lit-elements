@@ -33,8 +33,8 @@ export class FetchPaginator extends LitElement {
         };
 
         const localToParse = this.pokemons.map(localParse);
-        return localToParse.map(({name, hp, atk}) => html`
-              <poke-card name=${name} hp=${hp} atk=${atk}></poke-card>`
+        return localToParse.map((poke) => html`
+              <poke-card .pokemon=${poke}></poke-card>`
         );
     }
 
