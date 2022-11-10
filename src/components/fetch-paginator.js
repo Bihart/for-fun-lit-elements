@@ -1,4 +1,5 @@
 import { LitElement, html } from "lit";
+import { PagePokemonRepository } from '../service/pagePokemonRepository';
 
 export class FetchPaginator extends LitElement {
     static properties = {
@@ -9,31 +10,14 @@ export class FetchPaginator extends LitElement {
         super();
         this.pokemons = [];
     }
-    async #fetcher(url) {
-        const res = await fetch(url);
-        return await res.json();
-    }
 
     async firstUpdated() {
-        const URL = "https://pokeapi.co/api/v2/pokemon?limit=6";
-        const page = await this.#fetcher(URL);
-        const pokemonsUrl = page.results.map(x => x.url);
-        const pokemonPromises = pokemonsUrl.map(url => this.#fetcher(url));
-        const pokemosAllDataRes = await Promise.all(pokemonPromises);
+        const pokemosAllDataRes = await PagePokemonRepository.get();
         this.pokemons = pokemosAllDataRes;
     }
 
-    #mapURLandNames() {
-        function localParse({name, stats: [ {base_stat: hp}, {base_stat: atk}]}) {
-            return {
-                'name': name,
-                'hp': hp,
-                'atk': atk
-            };
-        };
-
-        const localToParse = this.pokemons.map(localParse);
-        return localToParse.map((poke) => html`
+    #mapPokemonsToHTML() {
+        return this.pokemons.map((poke) => html`
               <poke-card .pokemon=${poke}></poke-card>`
         );
     }
@@ -42,7 +26,7 @@ export class FetchPaginator extends LitElement {
     render() {
         return html`
       <div>
-         ${this.#mapURLandNames()}
+         ${this.#mapPokemonsToHTML()}
       </div>
     `;
     }
