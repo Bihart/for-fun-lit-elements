@@ -1,4 +1,4 @@
-export class PagePokemonRepository  {
+export class PagePokemonRepository {
     static async #fetcher(url) {
         const res = await fetch(url);
         return await res.json();
@@ -6,11 +6,11 @@ export class PagePokemonRepository  {
 
     static #extractDataPokemon(
         { name,
-          sprites: { front_default: img },
-          stats: [
-              { base_stat: hp },
-              { base_stat: atk }
-          ]
+            sprites: { front_default: img },
+            stats: [
+                { base_stat: hp },
+                { base_stat: atk }
+            ]
         }
     ) {
         return {
@@ -25,13 +25,13 @@ export class PagePokemonRepository  {
         const pokemonsUrl = pokemons.map(x => x.url);
         const pokemonFetchs = pokemonsUrl.map(url => this.#fetcher(url));
         const pokemosAllDataResponse = await Promise.all(pokemonFetchs)
-              .catch(() => console.error("fallo el promise.all :c"));
+            .catch(() => console.error("fallo el promise.all :c"));
         return pokemosAllDataResponse.map(this.#extractDataPokemon);
     }
 
     static async #petition(url) {
         const page = await this.#fetcher(url)
-              .catch(() => console.error("fallo el fetch :c"));
+            .catch(() => console.error("fallo el fetch :c"));
 
         const nextUrl = page.next ?? '';
         const prevUrl = page.previous ?? '';

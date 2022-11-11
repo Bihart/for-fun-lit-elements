@@ -49,7 +49,7 @@ section {
         const target = event.target;
         const { tagName, value } = target;
         const IsButton = tagName === "BUTTON";
-        if(!IsButton) {
+        if (!IsButton) {
             return;
         }
         const urlsToGoMap = new Map([
@@ -68,11 +68,11 @@ section {
 </section>
 <section @click=${this.#handleClick}>
 ${this.#prevUrl !== ""
- ? html`<button value="prev">Go prev</button>`
- : undefined}
+                ? html`<button value="prev">Go prev</button>`
+                : undefined}
 ${this.#currUrl !== this.#homeUrl
- ? html`<button value="home">Go home</button>`
- : undefined}
+                ? html`<button value="home">Go home</button>`
+                : undefined}
 <button value="next">Go next</button>
 </section>
     `;
