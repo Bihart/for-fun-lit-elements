@@ -1,9 +1,16 @@
-import { LitElement, html } from "lit";
+import { LitElement, html, css } from "lit";
 
 export class PokeCard extends LitElement {
     static properties = {
         pokemon: { type: Object },
     }
+    static styles = css`
+        :host {
+            border: solid 2px  blue;
+            margin: 0.5rem;
+            padding: 0.3rem;
+            text-align: center;
+        }`;
 
     constructor() {
         super();
@@ -11,11 +18,12 @@ export class PokeCard extends LitElement {
     }
 
     render() {
-        const { name, hp, atk } = this.pokemon;
+        const { name, hp, atk, img } = this.pokemon;
         return html`
-             <p>Name=${name}</p>
-             <p>HP=${hp}</p>
-             <p>ATK=${atk}</p>
+           <img src=${img} alt=${`[Sprite of ${name}]`}/>
+           <p>Name->${name}</p>
+           <p>HP->${hp}</p>
+           <p>ATK->${atk}</p>
      `;
     }
 }
