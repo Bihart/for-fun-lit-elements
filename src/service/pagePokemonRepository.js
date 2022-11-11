@@ -33,8 +33,8 @@ export class PagePokemonRepository  {
         const page = await this.#fetcher(url)
               .catch(() => console.error("fallo el fetch :c"));
 
-        const nextUrl = page.nextUrl ?? '';
-        const prevUrl = page.prevUrl ?? '';
+        const nextUrl = page.next ?? '';
+        const prevUrl = page.previous ?? '';
         const pokemons = await this.#petitionPokemons(page);
         return {
             next: nextUrl,
