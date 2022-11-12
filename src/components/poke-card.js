@@ -6,11 +6,11 @@ export class PokeCard extends LitElement {
     }
     static styles = css`
         :host {
+            display: block;
             border: solid 2px  blue;
-            margin: 0.5rem;
-            padding: 0.3rem;
             text-align: center;
-        }`;
+        }
+`;
 
     constructor() {
         super();
