@@ -7,16 +7,24 @@ export class FetchPaginator extends LitElement {
     }
 
     static styles = css`
-section {
+.poke-container {
     display: grid;
     grid-gap: 10px;
     grid-template: repeat(2, 1fr) / repeat(3, 0.5fr);
-    grid-auto-flow: column;
-}`;
+}
+input {
+  display: none;
+}
+
+input:checked + poke-card {
+  background-color: red;
+}
+`;
     #homeUrl;
     #nextUrl;
     #prevUrl;
     #currUrl;
+    #checkeCount;
     constructor() {
         super();
         this.pokemons = [];
@@ -24,6 +32,7 @@ section {
         this.#nextUrl = "";
         this.#prevUrl = "";
         this.#currUrl = "";
+        this.#checkeCount = 0;
     }
 
     async #getDataOfTheRepository(url) {
@@ -39,9 +48,28 @@ section {
         await this.#getDataOfTheRepository(this.#homeUrl);
     }
 
+    #handleChange (event) {
+        const currTarget = event.target;
+        if(currTarget.checked  && this.#checkeCount < 2){
+            this.#checkeCount++;
+            return;
+        }
+        if(!currTarget.checked) {
+            this.#checkeCount--;
+            return;
+        }
+        currTarget.checked = false;
+    }
+
+
     #mapPokemonsToHTML() {
         return this.pokemons.map(
-            (poke) => html`<poke-card .pokemon=${poke}></poke-card>`
+            (poke) => html`
+<label>
+<input @change=${this.#handleChange} type="checkbox" value=${poke.name}>
+<poke-card .pokemon=${poke}></poke-card>
+</label>
+`
         );
     }
 
@@ -63,7 +91,7 @@ section {
 
     render() {
         return html`
-<section>
+<section class="poke-container">
          ${this.#mapPokemonsToHTML()}
 </section>
 <section @click=${this.#handleClick}>
