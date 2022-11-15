@@ -112,19 +112,14 @@ input:checked + poke-card {
         if (!IsButton) {
             return;
         }
-        if (value !== "battle") {
-            const urlsToGoMap = new Map([
-                ["prev", this.#prevUrl],
-                ["home", this.#homeUrl],
-                ["next", this.#nextUrl]
-            ]);
-            const urlToGo = urlsToGoMap.get(value);
-            await this.#getDataOfTheRepository(urlToGo);
-            return;
-        }
-        // this.dispatchEventPleaseUpdateme("hola");
-        // const winner = Pokemon_Battle.pokeBattel(...this.pokemons);
-        // this.#dispatchEventGoToTheBattle();
+        const urlsToGoMap = new Map([
+            ["prev", this.#prevUrl],
+            ["home", this.#homeUrl],
+            ["next", this.#nextUrl]
+        ]);
+        const urlToGo = urlsToGoMap.get(value);
+        await this.#getDataOfTheRepository(urlToGo);
+        return;
     }
 
     #renderButtonBattle(){
@@ -142,7 +137,6 @@ input:checked + poke-card {
 <button value="prev" ?disabled=${this.#prevUrl === ""}>Go prev</button>
 <button value="home">Go home</button>
 <button value="next" ?disabled=${this.#nextUrl === ""}>Go next</button>
-${this.#renderButtonBattle()}
 </section>
     `;
     }
