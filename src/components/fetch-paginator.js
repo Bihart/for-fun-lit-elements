@@ -59,11 +59,13 @@ input:checked + poke-card {
         if(currTarget.checked  && this.#checkeCount < 2){
             this.#checkeCount++;
             this.updateReadyToBattle();
+            this.#dispatchEventGoToTheBattle();
             return;
         }
         if(!currTarget.checked) {
             this.#checkeCount--;
             this.updateReadyToBattle();
+            this.#dispatchEventGoToTheBattle();
             return;
         }
         currTarget.checked = false;
@@ -88,8 +90,19 @@ input:checked + poke-card {
             composed: true,
             cancelable: false,
         };
-        const myEvent = new CustomEvent('pleaseUpdateMe', configAndPayload);
+        const myEvent = new Event('pleaseUpdateMe', configAndPayload);
         return this.dispatchEvent(myEvent);
+    }
+    #dispatchEventGoToTheBattle(){
+        const pokemotToSend = this.shadowRoot.querySelectorAll("input:checked + poke-card");
+        const configAndPayload = {
+            detail: { pokemons: pokemotToSend, },
+            bubbles: true,
+            composed: true,
+            cancelable: false,
+        };
+        const myEvent = new CustomEvent('goToTheBattle', configAndPayload);
+        this.dispatchEvent(myEvent);
     }
 
     async #handleClick(event) {
@@ -106,12 +119,12 @@ input:checked + poke-card {
                 ["next", this.#nextUrl]
             ]);
             const urlToGo = urlsToGoMap.get(value);
-            this.dispatchEventPleaseUpdateme(urlToGo);
             await this.#getDataOfTheRepository(urlToGo);
             return;
         }
-        const winner = Pokemon_Battle.pokeBattel(...this.pokemons);
-        console.log(winner);
+        // this.dispatchEventPleaseUpdateme("hola");
+        // const winner = Pokemon_Battle.pokeBattel(...this.pokemons);
+        // this.#dispatchEventGoToTheBattle();
     }
 
     #renderButtonBattle(){

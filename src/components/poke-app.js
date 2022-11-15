@@ -1,9 +1,7 @@
 import { LitElement, html, css } from "lit";
-import { PagePokemonRepository } from "../service/pagePokemonRepository";
 
 export class PokeApp extends LitElement {
     static properties = {
-        allPokemons: { type: Array },
         pokemonsToBattle: { type: Array },
     }
     static styles = css`
@@ -16,26 +14,27 @@ export class PokeApp extends LitElement {
 
     constructor() {
         super();
-        this.allPokemons = [];
         this.pokemonsToBattle = [];
-        this.initPoint = "https://pokeapi.co/api/v2/pokemon?limit=6";
         this.addEventListener('pleaseUpdateMe', this.#handleUpdateMe);
+        this.addEventListener('goToTheBattle', this.#handleBattle);
     }
 
     #handleUpdateMe (event) {
         console.log(event.detail);
     }
 
-    async #getDataOfTheRepository(url) {
-        const pokemosAllDataRes = await PagePokemonRepository.get(url);
-
+    #handleBattle(event) {
+        const details = event.detail.pokemons;
+        const poke_cards =  Array.from(details);
+        const pokemons = poke_cards.map(x => x.__pokemon);
+        this.pokemonsToBattle = pokemons;
     }
+
     render() {
         return html`
-            <fetch-paginator .pokemons=${this.allPokemons}
-                              home=${this.initPoint}>
+            <fetch-paginator home=${this.initPoint}>
             </fetch-paginator>
-            <poke-battle></poke-battle>`;
+            <poke-battle .pokemons=${this.pokemonsToBattle}></poke-battle>`;
     }
 }
 
