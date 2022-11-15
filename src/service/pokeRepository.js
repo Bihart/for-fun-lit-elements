@@ -15,7 +15,8 @@ export class PokemonRepository {
     }
 
     #get(url){
-        this.#validedWinds(this.mem.get(url));
+        const newVals = this.#validedWinds(this.mem.get(url));
+        this.mem.set(url, newVals);
         return this.mem.get(url);
     }
 
