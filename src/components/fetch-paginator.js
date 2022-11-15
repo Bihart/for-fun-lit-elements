@@ -1,11 +1,10 @@
 import { LitElement, html, css } from "lit";
-import { Pokemon_Battle } from "../models/pokemon";
 import { PokemonRepository } from "../service/pokeRepository";
 
 export class FetchPaginator extends LitElement {
     static properties = {
         pokemons: { type: Array },
-        readyToBattle: { type: Boolean },
+        signal: { type: Boolean },
     }
 
     static styles = css`
@@ -24,6 +23,7 @@ input:checked + poke-card {
 `;
     #homeUrl;
     #nextUrl;
+    #currUrl;
     #prevUrl;
     #checkeCount;
     constructor() {
@@ -31,16 +31,28 @@ input:checked + poke-card {
         this.pokemons = [];
         this.#homeUrl = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=6";
         this.#nextUrl = "";
+        this.#currUrl = "";
         this.#prevUrl = "";
+        this._signal = false;
         this.#checkeCount = 0;
-        this.readyToBattle = false;
         this.repo = new PokemonRepository();
+    }
+
+    set signal(newVal) {
+        if(!newVal) {
+            this._signal = newVal;
+            return;
+        }
+        this._signal = false;
+        this.#getDataOfTheRepository(this.#currUrl);
+
     }
 
     async #getDataOfTheRepository(url) {
         const pokemosAllDataRes = await this.repo.get(url);
         const { next, prev, pokemons } = pokemosAllDataRes;
         this.pokemons = pokemons;
+        this.#currUrl = url;
         this.#nextUrl = next;
         this.#prevUrl = prev ?? "";
     }
@@ -49,22 +61,16 @@ input:checked + poke-card {
         await this.#getDataOfTheRepository(this.#homeUrl);
     }
 
-    updateReadyToBattle(){
-        this.readyToBattle = this.#checkeCount === 2;
-    }
-
     #handleChange (event) {
         event.preventDefault();
         const currTarget = event.target;
         if(currTarget.checked  && this.#checkeCount < 2){
             this.#checkeCount++;
-            this.updateReadyToBattle();
             this.#dispatchEventGoToTheBattle();
             return;
         }
         if(!currTarget.checked) {
             this.#checkeCount--;
-            this.updateReadyToBattle();
             this.#dispatchEventGoToTheBattle();
             return;
         }
@@ -83,16 +89,6 @@ input:checked + poke-card {
         );
     }
 
-    dispatchEventPleaseUpdateme(url) {
-        const configAndPayload = {
-            detail: { url: url, },
-            bubbles: true,
-            composed: true,
-            cancelable: false,
-        };
-        const myEvent = new Event('pleaseUpdateMe', configAndPayload);
-        return this.dispatchEvent(myEvent);
-    }
     #dispatchEventGoToTheBattle(){
         const pokemotToSend = this.shadowRoot.querySelectorAll("input:checked + poke-card");
         const configAndPayload = {
@@ -120,12 +116,6 @@ input:checked + poke-card {
         const urlToGo = urlsToGoMap.get(value);
         await this.#getDataOfTheRepository(urlToGo);
         return;
-    }
-
-    #renderButtonBattle(){
-        const disabled_p = !this.readyToBattle;
-        return html`
-<button value="battle" ?disabled=${disabled_p}>Pelear go go go!!</button>`;
     }
 
     render() {

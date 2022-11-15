@@ -3,6 +3,7 @@ import { LitElement, html, css } from "lit";
 export class PokeApp extends LitElement {
     static properties = {
         pokemonsToBattle: { type: Array },
+        signal: { type: Boolean }
     }
     static styles = css`
         :host {
@@ -11,16 +12,17 @@ export class PokeApp extends LitElement {
             text-align: center;
         }
 `;
-
     constructor() {
         super();
         this.pokemonsToBattle = [];
-        this.addEventListener('pleaseUpdateMe', this.#handleUpdateMe);
+        this.signal=false;
+        this.addEventListener('UpdateCards', this.#handleUpdateCard);
         this.addEventListener('goToTheBattle', this.#handleBattle);
     }
 
-    #handleUpdateMe (event) {
-        console.log(event.detail);
+    #handleUpdateCard (event) {
+        const signal =  event.detail.signal;
+        this.signal= signal;
     }
 
     #handleBattle(event) {
@@ -32,7 +34,7 @@ export class PokeApp extends LitElement {
 
     render() {
         return html`
-            <fetch-paginator home=${this.initPoint}>
+            <fetch-paginator .signal=${this.signal}>
             </fetch-paginator>
             <poke-battle .pokemons=${this.pokemonsToBattle}></poke-battle>`;
     }

@@ -43,13 +43,28 @@ article {
         if(newVal.length !== 2){
             this.winner = {};
         }
+
         this.#pokemons = newVal;
         this.requestUpdate();
     }
 
+    #dispatchUpdate(signal) {
+        const configAndPayload = {
+            detail: { signal: signal, },
+            bubbles: true,
+            composed: true,
+            cancelable: false,
+        };
+        const myEvent = new CustomEvent('UpdateCards', configAndPayload);
+        return this.dispatchEvent(myEvent);
+    }
+
     #handleClick(){
         const winner = Pokemon_Battle.pokeBattel(...this.#pokemons);
+        this.#dispatchUpdate(true);
         this.winner = winner;
+        setTimeout(() => this.#dispatchUpdate(false), 5);
+
     }
 
     #validedContent() {
