@@ -1,9 +1,11 @@
 import { LitElement, html, css } from "lit";
-import { PagePokemonRepository } from '../service/pagePokemonRepository';
+import { Pokemon_Battle } from "../models/pokemon";
+import { PokemonRepository } from "../service/pokeRepository";
 
 export class FetchPaginator extends LitElement {
     static properties = {
         pokemons: { type: Array },
+        readyToBattle: { type: Boolean },
     }
 
     static styles = css`
@@ -23,23 +25,22 @@ input:checked + poke-card {
     #homeUrl;
     #nextUrl;
     #prevUrl;
-    #currUrl;
     #checkeCount;
     constructor() {
         super();
         this.pokemons = [];
-        this.#homeUrl = "https://pokeapi.co/api/v2/pokemon?limit=6";
+        this.#homeUrl = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=6";
         this.#nextUrl = "";
         this.#prevUrl = "";
-        this.#currUrl = "";
         this.#checkeCount = 0;
+        this.readyToBattle = false;
+        this.repo = new PokemonRepository();
     }
 
     async #getDataOfTheRepository(url) {
-        const pokemosAllDataRes = await PagePokemonRepository.get(url);
+        const pokemosAllDataRes = await this.repo.get(url);
         const { next, prev, pokemons } = pokemosAllDataRes;
         this.pokemons = pokemons;
-        this.#currUrl = url;
         this.#nextUrl = next;
         this.#prevUrl = prev ?? "";
     }
@@ -48,14 +49,21 @@ input:checked + poke-card {
         await this.#getDataOfTheRepository(this.#homeUrl);
     }
 
+    updateReadyToBattle(){
+        this.readyToBattle = this.#checkeCount === 2;
+    }
+
     #handleChange (event) {
+        event.preventDefault();
         const currTarget = event.target;
         if(currTarget.checked  && this.#checkeCount < 2){
             this.#checkeCount++;
+            this.updateReadyToBattle();
             return;
         }
         if(!currTarget.checked) {
             this.#checkeCount--;
+            this.updateReadyToBattle();
             return;
         }
         currTarget.checked = false;
@@ -73,6 +81,17 @@ input:checked + poke-card {
         );
     }
 
+    dispatchEventPleaseUpdateme(url) {
+        const configAndPayload = {
+            detail: { url: url, },
+            bubbles: true,
+            composed: true,
+            cancelable: false,
+        };
+        const myEvent = new CustomEvent('pleaseUpdateMe', configAndPayload);
+        return this.dispatchEvent(myEvent);
+    }
+
     async #handleClick(event) {
         const target = event.target;
         const { tagName, value } = target;
@@ -80,13 +99,25 @@ input:checked + poke-card {
         if (!IsButton) {
             return;
         }
-        const urlsToGoMap = new Map([
-            ["prev", this.#prevUrl],
-            ["home", this.#homeUrl],
-            ["next", this.#nextUrl]
-        ]);
-        const urlToGo = urlsToGoMap.get(value);
-        await this.#getDataOfTheRepository(urlToGo);
+        if (value !== "battle") {
+            const urlsToGoMap = new Map([
+                ["prev", this.#prevUrl],
+                ["home", this.#homeUrl],
+                ["next", this.#nextUrl]
+            ]);
+            const urlToGo = urlsToGoMap.get(value);
+            this.dispatchEventPleaseUpdateme(urlToGo);
+            await this.#getDataOfTheRepository(urlToGo);
+            return;
+        }
+        const winner = Pokemon_Battle.pokeBattel(...this.pokemons);
+        console.log(winner);
+    }
+
+    #renderButtonBattle(){
+        const disabled_p = !this.readyToBattle;
+        return html`
+<button value="battle" ?disabled=${disabled_p}>Pelear go go go!!</button>`;
     }
 
     render() {
@@ -95,13 +126,10 @@ input:checked + poke-card {
          ${this.#mapPokemonsToHTML()}
 </section>
 <section @click=${this.#handleClick}>
-${this.#prevUrl !== ""
-                ? html`<button value="prev">Go prev</button>`
-                : undefined}
-${this.#currUrl !== this.#homeUrl
-                ? html`<button value="home">Go home</button>`
-                : undefined}
-<button value="next">Go next</button>
+<button value="prev" ?disabled=${this.#prevUrl === ""}>Go prev</button>
+<button value="home">Go home</button>
+<button value="next" ?disabled=${this.#nextUrl === ""}>Go next</button>
+${this.#renderButtonBattle()}
 </section>
     `;
     }
