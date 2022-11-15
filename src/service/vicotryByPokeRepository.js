@@ -19,7 +19,6 @@ export class WinsPokemonRepository {
     }
 
     #sync(){
-        console.debug('Sí se esta sync');
         const entries = this.mem.entries();
         const dataParsed = JSON.stringify(Object.fromEntries(entries));
         window.localStorage.setItem('wins', dataParsed);
