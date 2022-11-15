@@ -18,12 +18,13 @@ export class PokeCard extends LitElement {
     }
 
     render() {
-        const { name, hp, atk, img } = this.pokemon;
+        const { name, hp, atk, img, wins } = this.pokemon;
         return html`
            <img src=${img} alt=${`[Sprite of ${name}]`}/>
            <p>Name->${name}</p>
            <p>HP->${hp}</p>
            <p>ATK->${atk}</p>
+           <p>WINS->${wins}</p>
      `;
     }
 }
