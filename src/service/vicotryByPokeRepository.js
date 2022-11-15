@@ -1,33 +1,31 @@
 export class WinsPokemonRepository {
 
     constructor(){
-        this.mem = new Map(this.#savedData());
     }
 
-    #savedData() {
-        const oldMemString = window.localStorage.getItem('wins');
-        const oldMem = JSON.parse(oldMemString);
-        return oldMem === null ? [] : Object.entries(oldMem);
+    #getMem() {
+        const memString = window.localStorage.getItem('wins');
+        const mem = JSON.parse(memString) ??  {};
+        return mem;
     }
 
-    #get(pokeName){
-        return this.mem.get(pokeName);
+    #get(pokename){
+        const mem = this.#getMem();
+        return mem[pokename];
+
     }
 
-    #has(pokeName){
-        return this.mem.has(pokeName);
+    #has(pokename){
+        const mem = this.#getMem();
+        return mem[pokename] !== undefined;
     }
 
-    #sync(){
-        const entries = this.mem.entries();
-        const dataParsed = JSON.stringify(Object.fromEntries(entries));
-        window.localStorage.setItem('wins', dataParsed);
-    }
-
-    #addWin(pokeName) {
-        const oldWinds = this.#get(pokeName);
-        this.mem.set(pokeName, oldWinds + 1);
-        this.#sync();
+    #addWin(pokename) {
+        const mem = this.#getMem();
+        const oldWinds = mem[pokename] ?? 0;
+        mem[pokename] = oldWinds + 1;
+        const memString = JSON.stringify(mem);
+        window.localStorage.setItem('wins', memString);
     };
 
     get({name}) {
