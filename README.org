@@ -1,0 +1,22 @@
+* About [Español]
+
+Projecto creado con ~vite~ con el template ~vanilla-js-lit~. Un timido
+acercamiento a [[https://lit.dev/][Lit]] consuminedo [[https://pokeapi.co/][pokeapi v2]], intentando usar una capa de
+servicios para consumir recursos externos, y dada la envergadura del
+proyecto (3 web compones) usando el "patrón del mediador" para
+comunicación de eventos entre node hermanos.
+
+Cualquier sugerencá de arquitectura o del código, es bien recivida.
+
+* About
+
+Project create with ~vite~ with the ~vanilla-js-lit~ template. A shy
+approach to [[https://lit.dev/][Lit]] consuming [[https://pokeapi.co/][pokeapi v2]], trying to use a service layer to
+consume external resources, and given the number of Litelemente (3), I
+used the "mediator pattern" for even comunication between node
+siblings.
+
+** Who to run?
+
+Just install dependencies with your favorite node package panager
+(npm | yarn | pnpm) and run ~dev~ or ~build~, to convenience.
