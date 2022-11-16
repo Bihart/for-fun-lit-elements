@@ -8,11 +8,27 @@ export class FetchPaginator extends LitElement {
     }
 
     static styles = css`
+:host {
+   display: flex;
+   flex-direction: column;
+   gap: 1em;
+   margin: 1em;
+   padding: 1em;
+   width: 45vw;
+   border-radius: 0.3em;
+   box-shadow: 0 0 5px 0 red;
+}
+
 .poke-container {
     display: grid;
     grid-gap: 10px;
-    grid-template: repeat(2, 1fr) / repeat(3, 0.5fr);
+    grid-template: repeat(2, 1fr) / repeat(3, 1fr);
 }
+
+.btns-container {
+   align-self: center;
+}
+
 input {
   display: none;
 }
@@ -60,7 +76,7 @@ input:checked + poke-card {
     async firstUpdated() {
         await this.#getDataOfTheRepository(this.#homeUrl);
     }
-
+n
     #handleChange (event) {
         event.preventDefault();
         const currTarget = event.target;
@@ -123,7 +139,7 @@ input:checked + poke-card {
 <section class="poke-container">
          ${this.#mapPokemonsToHTML()}
 </section>
-<section @click=${this.#handleClick}>
+<section  class="btns-container" @click=${this.#handleClick}>
 <button value="prev" ?disabled=${this.#prevUrl === ""}>Go prev</button>
 <button value="home">Go home</button>
 <button value="next" ?disabled=${this.#nextUrl === ""}>Go next</button>

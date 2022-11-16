@@ -8,26 +8,38 @@ export class PokeBattle extends LitElement {
     }
     static styles = css`
         :host {
-            display: block;
-            border: solid 2px blanchedalmond;
+            display: flex;
+            width: 45vw;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            flex-direction: columns;
         }
-article {
-  display: flex;
-  flex-direction: row;
-}
 
-.main {
-  display: flex;
-  flex-direction: columns;
-}
+        section {
+           width: 40vw;
+           height: 35vh;
+           box-shadow: 0 0 5px blue;
+           border-radius: 0.3em;
+        }
+        article {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+        }
 
 .glatiadors {
-  border: solid 2px navy;
+  box-shadow: 0 0 5px navy;
+  border-radius: 0.3em;
   padding: 10px;
   margin: 10px;
 }
 .champion {
+  box-shadow: 0 0 5px navy;
+  border-radius: 0.3em;
   border: solid 2px navajowhite;
+  background-color: navajowhite;
   padding: 10px;
   margin: 10px;
 }
@@ -68,7 +80,10 @@ article {
     }
 
     #validedContent() {
-        const whenEmpty = html`<span> Please select pokemons to the battle.</span>`;
+        const whenEmpty = html`
+<p>
+  <span> Please select pokemons to the battle.</span>
+</p>`;
         const whenHavePokemons = this.#pokemons.map(
             ({img, name}) => html`
 <div class="glatiadors">
@@ -109,14 +124,10 @@ article {
 <section>
 <h3>Zone of the poke battle</h3>
 ${this.#renderButtonBattle()}
-<section class="main">
   <article>
     ${this.#validedContent()}
-  </article>
-<article>
     ${this.#validedWinner()}
- </article>
-</section>
+  </article>
 </section>
      `;
     }
