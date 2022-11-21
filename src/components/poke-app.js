@@ -2,8 +2,8 @@ import { LitElement, html, css } from "lit";
 
 export class PokeApp extends LitElement {
     static properties = {
-        pokemonsToBattle: { type: Array },
-        signal: { type: Boolean }
+        pokemonsToBattle: { type: Array, },
+        signal: { type: Boolean, },
     }
     static styles = css`
         :host {

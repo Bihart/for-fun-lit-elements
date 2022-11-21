@@ -3,7 +3,9 @@ import { PokemonRepository } from "../service/pokeRepository";
 
 export class FetchPaginator extends LitElement {
     static properties = {
-        pokemons: { type: Array },
+        _pokemons: { type: Array,
+                     state: true
+                   },
         signal: { type: Boolean },
     }
 
@@ -44,7 +46,7 @@ input:checked + poke-card {
     #checkeCount;
     constructor() {
         super();
-        this.pokemons = [];
+        this._pokemons = [];
         this.#homeUrl = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=6";
         this.#nextUrl = "";
         this.#currUrl = "";
@@ -67,7 +69,7 @@ input:checked + poke-card {
     async #getDataOfTheRepository(url) {
         const pokemosAllDataRes = await this.repo.get(url);
         const { next, prev, pokemons } = pokemosAllDataRes;
-        this.pokemons = pokemons;
+        this._pokemons = pokemons;
         this.#currUrl = url;
         this.#nextUrl = next;
         this.#prevUrl = prev ?? "";
@@ -76,7 +78,7 @@ input:checked + poke-card {
     async firstUpdated() {
         await this.#getDataOfTheRepository(this.#homeUrl);
     }
-n
+
     #handleChange (event) {
         event.preventDefault();
         const currTarget = event.target;
@@ -93,22 +95,12 @@ n
         currTarget.checked = false;
     }
 
-
-    #mapPokemonsToHTML() {
-        return this.pokemons.map(
-            (poke) => html`
-<label>
-<input @change=${this.#handleChange} type="checkbox" value=${poke.name}>
-<poke-card .pokemon=${poke}></poke-card>
-</label>
-`
-        );
-    }
-
     #dispatchEventGoToTheBattle(){
-        const pokemotToSend = this.shadowRoot.querySelectorAll("input:checked + poke-card");
+        const pokemotsToSend = this.shadowRoot.querySelectorAll(
+            "input:checked + poke-card"
+        );
         const configAndPayload = {
-            detail: { pokemons: pokemotToSend, },
+            detail: { pokemons: pokemotsToSend, },
             bubbles: true,
             composed: true,
             cancelable: false,
@@ -132,6 +124,17 @@ n
         const urlToGo = urlsToGoMap.get(value);
         await this.#getDataOfTheRepository(urlToGo);
         return;
+    }
+
+    #mapPokemonsToHTML() {
+        return this._pokemons.map(
+            (poke) => html`
+<label>
+<input @change=${this.#handleChange} type="checkbox" value=${poke.name}>
+<poke-card .pokemon=${poke}></poke-card>
+</label>
+`
+        );
     }
 
     render() {
