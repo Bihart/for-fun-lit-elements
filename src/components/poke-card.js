@@ -18,6 +18,10 @@ export class PokeCard extends LitElement {
             background-color: pink;
         }
 
+        p:first-of-type {
+            text-transform: capitalize;
+        }
+
         img {
             border-radius: 50%;
             background-color: white;
@@ -33,10 +37,10 @@ export class PokeCard extends LitElement {
         const { name, hp, atk, img, wins } = this.pokemon;
         return html`
            <img src=${img} alt=${`[Sprite of ${name}]`}/>
-           <p>Name->${name}</p>
-           <p>HP->${hp}</p>
-           <p>ATK->${atk}</p>
-           <p>WINS->${wins}</p>
+           <p>${name}</p>
+           <p>HP: ${hp}</p>
+           <p>ATK: ${atk}</p>
+           <p>WINS: ${wins}</p>
      `;
     }
 }

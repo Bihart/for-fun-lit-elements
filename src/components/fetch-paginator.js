@@ -16,9 +16,10 @@ export class FetchPaginator extends LitElement {
    gap: 1em;
    margin: 1em;
    padding: 1em;
-   width: 45vw;
+   width: max(45vw, 550px);
    border-radius: 0.3em;
    box-shadow: 0 0 5px 0 red;
+   box-sizing: border-box;
 }
 
 .poke-container {

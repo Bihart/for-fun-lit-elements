@@ -9,16 +9,17 @@ export class PokeBattle extends LitElement {
     static styles = css`
         :host {
             display: flex;
-            width: 45vw;
+            width: max(45vw, 500px);
             text-align: center;
             justify-content: center;
             align-items: center;
             flex-direction: columns;
+            box-sizing: border-box;
         }
 
         section {
-           width: 40vw;
-           height: 35vh;
+           width: 90%;
+           height: max(35vh, 400px);
            box-shadow: 0 0 5px blue;
            border-radius: 0.3em;
         }

@@ -8,6 +8,9 @@ export class PokeApp extends LitElement {
     static styles = css`
         :host {
             display: flex;
+            flex-wrap: wrap;
+            box-sizing: border-box;
+            justify-content: center;
         }
 `;
     constructor() {
