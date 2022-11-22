@@ -79,28 +79,33 @@ input:checked + poke-card {
         await this.#getDataOfTheRepository(this.#homeUrl);
     }
 
+
+
+
     #handleChange (event) {
         event.preventDefault();
         const currTarget = event.target;
+        const pokeCardUWU =  currTarget.nextElementSibling;
+        const pokeuwu = pokeCardUWU.__pokemon;
         if(currTarget.checked  && this.#checkeCount < 2){
             this.#checkeCount++;
-            this.#dispatchEventGoToTheBattle();
+            this.#dispatchEventGoToTheBattle("add", pokeuwu);
             return;
         }
         if(!currTarget.checked) {
             this.#checkeCount--;
-            this.#dispatchEventGoToTheBattle();
+            this.#dispatchEventGoToTheBattle("remove", pokeuwu);
             return;
         }
         currTarget.checked = false;
     }
 
-    #dispatchEventGoToTheBattle(){
-        const pokemotsToSend = this.shadowRoot.querySelectorAll(
-            "input:checked + poke-card"
-        );
+    #dispatchEventGoToTheBattle(command, poke){
         const configAndPayload = {
-            detail: { pokemons: pokemotsToSend, },
+            detail: {
+                command: command,
+                pokemon: poke,
+            },
             bubbles: true,
             composed: true,
             cancelable: false,
