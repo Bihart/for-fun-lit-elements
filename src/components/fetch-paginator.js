@@ -141,13 +141,12 @@ input:checked + poke-card {
             const isChecked = this.#checkedsPokemons.has(pokeName);
             return html`
 <label>
-<input @change=${this.#handleChange}
-       type="checkbox"
+<input type="checkbox"
        value=${pokeName}
-       ?checked=${isChecked}>
+       .checked=${isChecked}>
   <poke-card .pokemon=${poke}></poke-card>
 </label>
-`
+`;
         };
 
         return this._pokemons.map(render_by_pokemon);
@@ -155,7 +154,7 @@ input:checked + poke-card {
 
     render() {
         return html`
-<section class="poke-container">
+<section @change=${this.#handleChange}  class="poke-container">
          ${this.#mapPokemonsToHTML()}
 </section>
 <section  class="btns-container" @click=${this.#handleClick}>
