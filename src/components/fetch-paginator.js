@@ -18,7 +18,6 @@ export class FetchPaginator extends LitElement {
    padding: 1em;
    width: max(45vw, 550px);
    border-radius: 0.3em;
-   box-shadow: 0 0 5px 0 red;
    box-sizing: border-box;
 }
 
@@ -37,7 +36,35 @@ input {
 }
 
 input:checked + poke-card {
+  box-shadow: 0px 5px 10px -4px #999, 0px 10px 5px -5px red;
+}
+input:checked + poke-card::after {
+  content: "";
+  position: absolute;
   background-color: red;
+  height: 7px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+button {
+  border-radius: 5px;
+  border: solid 2px transparent;
+  background-color: transparent;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+button[disabled] {
+  pointer-events: none;
+  opacity: 0.8;
+  cursor: default;
+}
+
+button:hover:not([disabled]) {
+  transform: scale(1.1);
 }
 `;
     #homeUrl;
@@ -116,23 +143,18 @@ input:checked + poke-card {
         this.dispatchEvent(myEvent);
     }
 
-    async #handleClick(event) {
-        const target = event.target;
-        const { tagName, value } = target;
-        const IsButton = tagName === "BUTTON";
-        if (!IsButton) {
-            return;
+   #handleClick(value) {
+        return async () => {
+          const urlsToGoMap = new Map([
+              ["prev", this.#prevUrl],
+              ["home", this.#homeUrl],
+              ["next", this.#nextUrl]
+          ]);
+          const urlToGo = urlsToGoMap.get(value);
+          let checkboxs = this.shadowRoot.querySelectorAll('input[type=checkbox]');
+          Array.from(checkboxs).forEach(x => x.checked = false);
+          await this.#getDataOfTheRepository(urlToGo);
         }
-        const urlsToGoMap = new Map([
-            ["prev", this.#prevUrl],
-            ["home", this.#homeUrl],
-            ["next", this.#nextUrl]
-        ]);
-        const urlToGo = urlsToGoMap.get(value);
-        let checkboxs = this.shadowRoot.querySelectorAll('input[type=checkbox]');
-        Array.from(checkboxs).forEach(x => x.checked = false);
-        await this.#getDataOfTheRepository(urlToGo);
-        return;
     }
 
     #mapPokemonsToHTML() {
@@ -141,12 +163,13 @@ input:checked + poke-card {
             const isChecked = this.#checkedsPokemons.has(pokeName);
             return html`
 <label>
-<input type="checkbox"
+<input @change=${this.#handleChange}
+       type="checkbox"
        value=${pokeName}
-       .checked=${isChecked}>
+       ?checked=${isChecked}>
   <poke-card .pokemon=${poke}></poke-card>
 </label>
-`;
+`
         };
 
         return this._pokemons.map(render_by_pokemon);
@@ -154,13 +177,13 @@ input:checked + poke-card {
 
     render() {
         return html`
-<section @change=${this.#handleChange}  class="poke-container">
-         ${this.#mapPokemonsToHTML()}
+<section class="poke-container">
+   ${this.#mapPokemonsToHTML()}
 </section>
-<section  class="btns-container" @click=${this.#handleClick}>
-<button value="prev" ?disabled=${this.#prevUrl === ""}>Go prev</button>
-<button value="home">Go home</button>
-<button value="next" ?disabled=${this.#nextUrl === ""}>Go next</button>
+<section  class="btns-container">
+  <button @click=${this.#handleClick("prev")} ?disabled=${this.#prevUrl === ""}><poke-icon name="prev"/></button>
+  <button @click=${this.#handleClick("home")}><poke-icon name="home"/></button>
+  <button @click=${this.#handleClick("next")} ?disabled=${this.#nextUrl === ""}><poke-icon name="next"/></button>
 </section>
     `;
     }

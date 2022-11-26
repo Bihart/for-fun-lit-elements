@@ -8,14 +8,18 @@ export class PokeCard extends LitElement {
         :host {
             display: block;
             text-align: center;
-            box-shadow: 0 0 10px 0px #9393BF;
             border-radius: 5px;
-            transition: background-color 1s linear;
-            padding: 0.2em;
+            transition: background-color .2s;
+            padding: .5rem 0.2rem;
+            background-color: white;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0px 5px 10px -4px #999;
         }
 
         :host(:hover) {
-            background-color: pink;
+            background-color: #EEE;
         }
 
         p:first-of-type {
