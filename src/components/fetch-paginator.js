@@ -44,6 +44,7 @@ input:checked + poke-card {
     #nextUrl;
     #currUrl;
     #prevUrl;
+    #checkedsPokemons;
     #checkeCount;
     constructor() {
         super();
@@ -52,6 +53,7 @@ input:checked + poke-card {
         this.#nextUrl = "";
         this.#currUrl = "";
         this.#prevUrl = "";
+        this.#checkedsPokemons = new Map();
         this._signal = false;
         this.#checkeCount = 0;
         this.repo = new PokemonRepository();
@@ -64,7 +66,6 @@ input:checked + poke-card {
         }
         this._signal = false;
         this.#getDataOfTheRepository(this.#currUrl);
-
     }
 
     async #getDataOfTheRepository(url) {
@@ -80,22 +81,22 @@ input:checked + poke-card {
         await this.#getDataOfTheRepository(this.#homeUrl);
     }
 
-
-
-
     #handleChange (event) {
         event.preventDefault();
         const currTarget = event.target;
-        const pokeCardUWU =  currTarget.nextElementSibling;
-        const pokeuwu = pokeCardUWU.__pokemon;
+        const pokeCard =  currTarget.nextElementSibling;
+        const poke = pokeCard.__pokemon;
+        const { name: pokeName } = poke;
         if(currTarget.checked  && this.#checkeCount < 2){
+            this.#checkedsPokemons.set(pokeName, true);
             this.#checkeCount++;
-            this.#dispatchEventGoToTheBattle("add", pokeuwu);
+            this.#dispatchEventGoToTheBattle("add", poke);
             return;
         }
         if(!currTarget.checked) {
             this.#checkeCount--;
-            this.#dispatchEventGoToTheBattle("remove", pokeuwu);
+            this.#checkedsPokemons.delete(pokeName);
+            this.#dispatchEventGoToTheBattle("remove", poke);
             return;
         }
         currTarget.checked = false;
@@ -128,19 +129,28 @@ input:checked + poke-card {
             ["next", this.#nextUrl]
         ]);
         const urlToGo = urlsToGoMap.get(value);
+        let checkboxs = this.shadowRoot.querySelectorAll('input[type=checkbox]');
+        Array.from(checkboxs).forEach(x => x.checked = false);
         await this.#getDataOfTheRepository(urlToGo);
         return;
     }
 
     #mapPokemonsToHTML() {
-        return this._pokemons.map(
-            (poke) => html`
+        const render_by_pokemon = (poke) => {
+            const { name: pokeName } = poke;
+            const isChecked = this.#checkedsPokemons.has(pokeName);
+            return html`
 <label>
-<input @change=${this.#handleChange} type="checkbox" value=${poke.name}>
-<poke-card .pokemon=${poke}></poke-card>
+<input @change=${this.#handleChange}
+       type="checkbox"
+       value=${pokeName}
+       ?checked=${isChecked}>
+  <poke-card .pokemon=${poke}></poke-card>
 </label>
 `
-        );
+        };
+
+        return this._pokemons.map(render_by_pokemon);
     }
 
     render() {

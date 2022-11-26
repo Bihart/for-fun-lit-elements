@@ -45,7 +45,6 @@ export class PokeApp extends LitElement {
         }
     }
 
-
     #handleBattle(event) {
         const { command, pokemon } = event.detail;
         if ( command == "add" ) {
