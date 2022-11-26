@@ -3,9 +3,10 @@ import { PokemonRepository } from "../service/pokeRepository";
 
 export class FetchPaginator extends LitElement {
     static properties = {
-        _pokemons: { type: Array,
-                     state: true
-                   },
+        _pokemons: {
+            type: Array,
+            state: true
+        },
         signal: { type: Boolean },
     }
 
@@ -67,19 +68,19 @@ button:hover:not([disabled]) {
   transform: scale(1.1);
 }
 `;
-    #homeUrl;
-    #nextUrl;
+    #linksToNav
     #currUrl;
-    #prevUrl;
     #checkedsPokemons;
     #checkeCount;
     constructor() {
         super();
         this._pokemons = [];
-        this.#homeUrl = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=6";
-        this.#nextUrl = "";
+        this.#linksToNav = new Map([
+            ["prev", ""],
+            ["home", "https://pokeapi.co/api/v2/pokemon?offset=0&limit=6"],
+            ["next", ""]
+        ]);
         this.#currUrl = "";
-        this.#prevUrl = "";
         this.#checkedsPokemons = new Map();
         this._signal = false;
         this.#checkeCount = 0;
@@ -87,7 +88,7 @@ button:hover:not([disabled]) {
     }
 
     set signal(newVal) {
-        if(!newVal) {
+        if (!newVal) {
             this._signal = newVal;
             return;
         }
@@ -100,27 +101,28 @@ button:hover:not([disabled]) {
         const { next, prev, pokemons } = pokemosAllDataRes;
         this._pokemons = pokemons;
         this.#currUrl = url;
-        this.#nextUrl = next;
-        this.#prevUrl = prev ?? "";
+        this.#linksToNav.set("next", next);
+        this.#linksToNav.set("prev", prev ?? "");
     }
 
     async firstUpdated() {
-        await this.#getDataOfTheRepository(this.#homeUrl);
+        const homeUrl = this.#linksToNav.get("home");
+        await this.#getDataOfTheRepository(homeUrl);
     }
 
-    #handleChange (event) {
+    #handleChange(event) {
         event.preventDefault();
         const currTarget = event.target;
-        const pokeCard =  currTarget.nextElementSibling;
+        const pokeCard = currTarget.nextElementSibling;
         const poke = pokeCard.__pokemon;
         const { name: pokeName } = poke;
-        if(currTarget.checked  && this.#checkeCount < 2){
+        if (currTarget.checked && this.#checkeCount < 2) {
             this.#checkedsPokemons.set(pokeName, true);
             this.#checkeCount++;
             this.#dispatchEventGoToTheBattle("add", poke);
             return;
         }
-        if(!currTarget.checked) {
+        if (!currTarget.checked) {
             this.#checkeCount--;
             this.#checkedsPokemons.delete(pokeName);
             this.#dispatchEventGoToTheBattle("remove", poke);
@@ -129,7 +131,7 @@ button:hover:not([disabled]) {
         currTarget.checked = false;
     }
 
-    #dispatchEventGoToTheBattle(command, poke){
+    #dispatchEventGoToTheBattle(command, poke) {
         const configAndPayload = {
             detail: {
                 command: command,
@@ -143,18 +145,28 @@ button:hover:not([disabled]) {
         this.dispatchEvent(myEvent);
     }
 
-   #handleClick(value) {
-        return async () => {
-          const urlsToGoMap = new Map([
-              ["prev", this.#prevUrl],
-              ["home", this.#homeUrl],
-              ["next", this.#nextUrl]
-          ]);
-          const urlToGo = urlsToGoMap.get(value);
-          let checkboxs = this.shadowRoot.querySelectorAll('input[type=checkbox]');
-          Array.from(checkboxs).forEach(x => x.checked = false);
-          await this.#getDataOfTheRepository(urlToGo);
+    #uncheckAllCheckbox() {
+        const checkboxs = this.shadowRoot.querySelectorAll('input[type=checkbox]');
+        Array.from(checkboxs).forEach(x => x.checked = false);
+    }
+
+    #getValueInHandleClick(target) {
+        const { tagName }  = target;
+        if (tagName === "POKE-ICON") {
+            return target.getAttribute("name");
         }
+        if (tagName === "BUTTON") {
+            return target.getAttribute("value");
+        }
+        throw "Invalid target";
+    }
+
+    async #handleClick(event) {
+        const target = event.target;
+        const value = this.#getValueInHandleClick(target);
+        const urlToGo = this.#linksToNav.get(value);
+        this.#uncheckAllCheckbox();
+        await this.#getDataOfTheRepository(urlToGo);
     }
 
     #mapPokemonsToHTML() {
@@ -166,7 +178,7 @@ button:hover:not([disabled]) {
 <input @change=${this.#handleChange}
        type="checkbox"
        value=${pokeName}
-       ?checked=${isChecked}>
+       .checked=${isChecked}>
   <poke-card .pokemon=${poke}></poke-card>
 </label>
 `
@@ -176,14 +188,24 @@ button:hover:not([disabled]) {
     }
 
     render() {
+        const prevIsEmptyLink = this.#linksToNav.get("prev") === "";
+        const nextIsEmptyLink = this.#linksToNav.get("next") === "";
         return html`
 <section class="poke-container">
    ${this.#mapPokemonsToHTML()}
 </section>
-<section  class="btns-container">
-  <button @click=${this.#handleClick("prev")} ?disabled=${this.#prevUrl === ""}><poke-icon name="prev"/></button>
-  <button @click=${this.#handleClick("home")}><poke-icon name="home"/></button>
-  <button @click=${this.#handleClick("next")} ?disabled=${this.#nextUrl === ""}><poke-icon name="next"/></button>
+<section class="btns-container">
+  <button @click=${this.#handleClick} value="prev"
+          ?disabled=${prevIsEmptyLink}>
+    <poke-icon name="prev"/>
+  </button>
+  <button @click=${this.#handleClick} value="home">
+    <poke-icon name="home"></poke-icon>
+  </button>
+  <button @click=${this.#handleClick} value="next"
+          ?disabled=${nextIsEmptyLink}>
+    <poke-icon name="next"></poke-icon>
+  </button>
 </section>
     `;
     }
