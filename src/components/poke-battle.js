@@ -7,42 +7,73 @@ export class PokeBattle extends LitElement {
         winner: { type: Object },
     }
     static styles = css`
-        :host {
-            display: flex;
-            width: max(45vw, 500px);
-            text-align: center;
-            justify-content: center;
-            align-items: center;
-            flex-direction: columns;
-            box-sizing: border-box;
-        }
+:host {
+  width: max(45vw, 500px);
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  box-sizing: border-box;
+}
 
-        section {
-           width: 90%;
-           height: max(35vh, 400px);
-           box-shadow: 0 0 5px blue;
-           border-radius: 0.3em;
-        }
-        article {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          justify-content: center;
-        }
+h3 {
+  font-size: 1.3rem;
+}
+
+button {
+  padding: .5rem 1rem;
+  border-radius: 2px;
+  border: solid 2px transparent;
+  background-color: #999;
+  color: black;
+  font-size: 1.05rem;
+  cursor: pointer;
+}
+
+button[disabled] {
+  color: #0009;
+  background-color: #AAA;
+}
+
+section {
+   width: 90%;
+   height: max(35vh, 400px);
+   border-radius: 0.3em;
+   background-color: white;
+   box-shadow: 0px 5px 10px -4px #999;
+   color: black;
+}
+article {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
 
 .glatiadors {
-  box-shadow: 0 0 5px navy;
   border-radius: 0.3em;
+  padding: 10px;
+  margin: 10px;
+  background-color: #999;
+}
+
+.glatiadors img {
+  filter: drop-shadow(2px 4px 6px black);
+}
+
+.glatiador-0 { background-color: red; }
+.glatiador-1 { background-color: cyan; }
+
+.champion {
+  border-radius: 0.3em;
+  background-color: #31f92f;
   padding: 10px;
   margin: 10px;
 }
-.champion {
-  box-shadow: 0 0 5px navy;
-  border-radius: 0.3em;
-  border: solid 2px navajowhite;
-  background-color: navajowhite;
-  padding: 10px;
-  margin: 10px;
+.champion img {
+  filter: drop-shadow(2px 4px 6px black);
 }
 `;
     #pokemons;
@@ -86,8 +117,8 @@ export class PokeBattle extends LitElement {
   <span> Please select pokemons to the battle.</span>
 </p>`;
         const whenHavePokemons = this.#pokemons.map(
-            ({img, name}) => html`
-<div class="glatiadors">
+            ({img, name}, i) => html`
+<div class="glatiadors glatiador-${i}">
 <h4>Gladiator</h4>
            <img src=${img} alt=${`[Sprite of ${name}]`}/>
            <p>${name}</p>
