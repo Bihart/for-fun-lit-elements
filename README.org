@@ -10,13 +10,10 @@ Cualquier sugerencá de arquitectura o del código, es bien recivida.
 
 * About
 
-Project create with ~vite~ with the ~vanilla-js-lit~ template. A shy
-approach to [[https://lit.dev/][Lit]] consuming [[https://pokeapi.co/][pokeapi v2]], trying to use a service layer to
-consume external resources, and given the number of Litelemente (3), I
-used the "mediator pattern" for even comunication between node
-siblings.
+The project was created with vite with the vanilla-js-lit template.
+A shy approach to Lit consuming pokeapi v2, trying to use a service layer to consume external resources, and given the number of Litelemente (3), I used the “mediator pattern” for even communication between node siblings.
 
-** Who to run?
+** How to run?
 
-Just install dependencies with your favorite node package panager
+Just install dependencies with your favorite node package manager.
 (npm | yarn | pnpm) and run ~dev~ or ~build~, to convenience.
