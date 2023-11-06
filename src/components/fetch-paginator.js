@@ -1,7 +1,9 @@
 import { LitElement, html, css } from "lit";
 import { PokemonRepository } from "../service/pokeRepository";
+import { Icon } from "./icons";
 
-export class FetchPaginator extends LitElement {
+
+class FetchPaginator extends LitElement {
     static properties = {
         _pokemons: {
             type: Array,
@@ -210,3 +212,6 @@ button:hover:not([disabled]) {
     `;
     }
 }
+
+window.customElements.define("poke-icon", Icon);
+export default FetchPaginator;
