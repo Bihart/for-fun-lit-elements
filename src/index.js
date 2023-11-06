@@ -4,8 +4,6 @@ import { PokeCard } from "./components/poke-card.js";
 import { PokeApp } from "./components/poke-app.js";
 import { Icon } from "./icons";
 
-import "./global.css";
-
 window.customElements.define("poke-card", PokeCard);
 window.customElements.define("fetch-paginator", FetchPaginator);
 window.customElements.define("poke-battle", PokeBattle);
