@@ -19,3 +19,6 @@ used the “mediator pattern” for even communication between node siblings.
 
 Just install dependencies with your favorite node package manager.
 (npm | yarn | pnpm) and run ~dev~ or ~build~, to convenience.
+
+**** TODO
+[] Add [[https://developer.mozilla.org/en-US/docs/Web/API/Broadcast_Channel_API][Broadcast Channel]].
